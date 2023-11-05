@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://fbxhre7ch6rt"]
+
+[ext_resource type="Material" uid="uid://chymlbjuba44s" path="res://addons/particlestars/DefaultData/Stars_particle_process_material.tres" id="1_mv58l"]
+[ext_resource type="Material" uid="uid://crgghxhdycvhe" path="res://addons/particlestars/DefaultData/StarRenderMaterial.tres" id="2_otqfi"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_kauv4"]
+material = ExtResource("2_otqfi")
+
+[node name="StarGenerator" type="GPUParticles3D"]
+amount = 3072
+lifetime = 10.0
+preprocess = 3.0
+visibility_aabb = AABB(-500.755, -500.916, -500.908, 1001.71, 1001.89, 1001.5)
+draw_order = 1
+process_material = ExtResource("1_mv58l")
+draw_pass_1 = SubResource("QuadMesh_kauv4")

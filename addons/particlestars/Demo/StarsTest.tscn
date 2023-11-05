@@ -1,0 +1,151 @@
+[gd_scene load_steps=16 format=3 uid="uid://bvp0lg81nwlb6"]
+
+[ext_resource type="Script" path="res://addons/particlestars/Demo/CameraMovement.cs" id="1_tywdi"]
+[ext_resource type="Texture2D" uid="uid://sl1rx0cwdmve" path="res://addons/particlestars/DefaultData/volumetric-deep-space-4K.exr" id="2_7yk3q"]
+[ext_resource type="Script" path="res://addons/particlestars/StarGeneratorNode.cs" id="2_28h1i"]
+[ext_resource type="PackedScene" uid="uid://fbxhre7ch6rt" path="res://addons/particlestars/DefaultData/StarGenerator.tscn" id="3_jgq8g"]
+[ext_resource type="Script" path="res://addons/particlestars/Demo/SpeedReadout.cs" id="4_58mva"]
+[ext_resource type="Script" path="res://addons/particlestars/Demo/FramerateLbl.cs" id="5_jsp3f"]
+[ext_resource type="Script" path="res://addons/particlestars/Demo/Orbiter.cs" id="6_lgdmm"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_he5lc"]
+panorama = ExtResource("2_7yk3q")
+
+[sub_resource type="Sky" id="Sky_7yqva"]
+sky_material = SubResource("PanoramaSkyMaterial_he5lc")
+process_mode = 3
+
+[sub_resource type="Environment" id="Environment_64edf"]
+background_mode = 2
+background_energy_multiplier = 0.5
+sky = SubResource("Sky_7yqva")
+ambient_light_source = 3
+reflected_light_source = 2
+tonemap_mode = 3
+tonemap_white = 1.5
+glow_enabled = true
+glow_blend_mode = 0
+glow_hdr_threshold = 0.8
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_2h0vp"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_snfst"]
+shading_mode = 0
+albedo_color = Color(50, 50, 25, 1)
+disable_receive_shadows = true
+proximity_fade_distance = 1000.0
+distance_fade_min_distance = 1000.0
+distance_fade_max_distance = 1100.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_65sf0"]
+material = SubResource("StandardMaterial3D_snfst")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xdh5x"]
+albedo_color = Color(0.1, 0.9, 0.9, 1)
+roughness = 0.1
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+emission_energy_multiplier = 0.1
+
+[sub_resource type="BoxMesh" id="BoxMesh_nhlpp"]
+material = SubResource("StandardMaterial3D_xdh5x")
+size = Vector3(20, 20, 20)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+script = ExtResource("1_tywdi")
+StartingSpeed = 40.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_64edf")
+camera_attributes = SubResource("CameraAttributesPractical_2h0vp")
+
+[node name="StarGenerator" type="Node3D" parent="." node_paths=PackedStringArray("TrackingTarget")]
+script = ExtResource("2_28h1i")
+TrackingTarget = NodePath("../Camera3D")
+TemplateStarfield = ExtResource("3_jgq8g")
+MaxSpeed = 10.0
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.01
+anchor_top = 0.7
+anchor_right = 0.3
+anchor_bottom = 0.99
+grow_vertical = 0
+
+[node name="Label" type="Label" parent="Control/VBoxContainer"]
+layout_mode = 2
+text = "Use WASD to fly around. Use + and - to change movement speed."
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Control/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Control/VBoxContainer"]
+layout_mode = 2
+text = "Current Movement Speed:"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="LblMin" type="Label" parent="Control/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "1"
+
+[node name="ProgressBar" type="ProgressBar" parent="Control/VBoxContainer/HBoxContainer" node_paths=PackedStringArray("Min", "Max", "Camera")]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("4_58mva")
+Min = NodePath("../LblMin")
+Max = NodePath("../LblMax")
+Camera = NodePath("../../../../Camera3D")
+
+[node name="LblMax" type="Label" parent="Control/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "10"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "FrameRate: "
+
+[node name="FramerateLbl" type="Label" parent="Control/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "000"
+horizontal_alignment = 2
+script = ExtResource("5_jsp3f")
+
+[node name="Sun" type="MeshInstance3D" parent="."]
+transform = Transform3D(50, 0, 0, 0, 50, 0, 0, 0, 50, 0, 0, -1000)
+cast_shadow = 0
+visibility_range_end = 3000.0
+visibility_range_end_margin = 50.0
+visibility_range_fade_mode = 1
+mesh = SubResource("SphereMesh_65sf0")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Sun"]
+layers = 17
+light_color = Color(1, 1, 0.878431, 1)
+light_energy = 10.0
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." node_paths=PackedStringArray("OrbitalCenter")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.99, 0, -255.782)
+mesh = SubResource("BoxMesh_nhlpp")
+script = ExtResource("6_lgdmm")
+OrbitalCenter = NodePath("../Sun")
+OrbitalRadius = 100.0
+OrbitalVelocity = 20.0

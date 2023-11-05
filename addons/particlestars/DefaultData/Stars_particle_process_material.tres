@@ -1,0 +1,32 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=5 format=3 uid="uid://chymlbjuba44s"]
+
+[sub_resource type="Gradient" id="Gradient_vm7ei"]
+offsets = PackedFloat32Array(0.1, 0.3, 0.5, 0.547771, 0.605096, 0.757962)
+colors = PackedColorArray(20, 10, 10, 1, 20, 20, 20, 1, 20, 10, 10, 1, 20, 5, 5, 1, 10, 15, 15, 1, 10, 10, 10, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_ci1yh"]
+gradient = SubResource("Gradient_vm7ei")
+use_hdr = true
+
+[sub_resource type="Gradient" id="Gradient_v3mhr"]
+offsets = PackedFloat32Array(0, 0.125, 0.875, 1)
+colors = PackedColorArray(0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_vpkmn"]
+gradient = SubResource("Gradient_v3mhr")
+
+[resource]
+emission_shape = 2
+emission_sphere_radius = 500.0
+particle_flag_rotate_y = true
+spread = 180.0
+gravity = Vector3(0, 0, 0)
+angle_min = -720.0
+angle_max = 720.0
+scale_min = 2.0
+scale_max = 10.0
+color_ramp = SubResource("GradientTexture1D_vpkmn")
+color_initial_ramp = SubResource("GradientTexture1D_ci1yh")
+hue_variation_min = -0.1
+hue_variation_max = 0.1
+attractor_interaction_enabled = false
